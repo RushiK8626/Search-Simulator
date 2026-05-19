@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Simulator</title>
+    <link rel="icon" href="assets/icon.png">
+    <link rel="stylesheet" href="style/style.css">
+    <script src="scripts/script.js" type="module" defer></script>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Search Simulator</h1>
+    </div>
+    <div class="container" style="color: white;">
+        <div class="left-panel">
+            <div class="menu">
+                <h3>Algorithm</h3>
+                <div class="dropdown" data-action="algorithm">
+                    <button id="dropdownBtn">Depth First Search ▼</button>
+
+                    <div id="dropdownMenu" class="dropdown-menu">
+                        <div class="dropdown-item" data-value="dfs">Depth First Search</div>
+                        <div class="dropdown-item" data-value="bfs">Breadth First Search</div>
+                        <div class="dropdown-item" data-value="ucs">Uniform Cost Search</div>
+                        <div class="dropdown-item" data-value="greedy">Best First Search</div>
+                        <div class="dropdown-item" data-value="astar">A Star Search</div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu">
+                <h3>Heuristic</h3>
+                <div class="dropdown" data-action="heuristic">
+                    <button id="dropdownBtn">Manhattan Distance ▼</button>
+
+                    <div id="dropdownMenu" class="dropdown-menu">
+                        <div class="dropdown-item" data-value="euclidian">Euclidian Distance</div>
+                        <div class="dropdown-item" data-value="manhattan">Manhattan Distance</div>
+                        <div class="dropdown-item" data-value="chebyshev">Chebyshev Distance</div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu" id="info-panel">
+                <!-- <h3>Algorithm Info</h3> -->
+                <div class="submenu" id="algorithm-info">
+                    <h4 style="margin: 0;">DFS</h4>
+                    <p>
+                        DFS (Depth First Search): Goes deep along one path before backtracking. Uses less memory, but
+                        does not guarantee the shortest path.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="menu">
+                <!-- <h3>Animation</h3> -->
+                <div class="slider-container">
+                    <label>
+                        Step Delay: <span class="slider-value" data-action="step-delay">50 ms</span>
+                    </label>
+                    <input type="range" class="slider-control" data-action="step-delay" min="0" max="500" step="5"
+                        value="50">
+
+                </div>
+            </div>
+            <div class="menu">
+                <!-- <h3>Grid</h3> -->
+                <div class="slider-container">
+                    <label>
+                        Grid Size: <span class="slider-value" data-action="grid-size">25</span>
+                    </label>
+                    <input type="range" class="slider-control" data-action="grid-size" min="5" max="100" step="1"
+                        value="25">
+                </div>
+            </div>
+            <div class="menu">
+                <!-- <h3>Obstacles</h3> -->
+                <div class="slider-container">
+                    <label>
+                        Obstacle Density: <span class="slider-value" data-action="obstacle-density">0.30</span>
+                    </label>
+                    <input type="range" class="slider-control" data-action="obstacle-density" min="0.05" max="1"
+                        step="0.05" value="0.30">
+                </div>
+            </div>
+            <div class="menu">
+                <!-- <h3>Replanning</h3> -->
+                <label class="toggle-control">
+                    <span class="toggle-label-text">Enable Replanning</span>
+                    <input type="checkbox" id="replanning-toggle" checked>
+                    <div class="control"></div>
+                </label>
+            </div>
+            <div class="menu">
+                <!-- <h3>Start Cell</h3> -->
+                <div class="submenu"
+                    style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 18px; background: #232526;">
+                    <button class="btn-primary panel-btn" id="select-start-btn"
+                    style="max-width: 140px; min-width: 110px;">Select Start</button>
+                    <span id="start-cell-label"
+                        style="font-weight: 600; color: #06b6d4; background: rgba(59,130,246,0.08); padding: 4px 16px; border-radius: 0.4em; border: 1px solid rgba(59,130,246,0.18); font-size: 1.1em;">(0,
+                        0)</span>
+                </div>
+            </div>
+            <div class="menu">
+                <!-- <h3>Goal Cell</h3> -->
+                <div class="submenu"
+                    style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 18px; background: #232526;">
+                    <button class="btn-primary panel-btn" id="select-goal-btn"
+                    style="max-width: 140px; min-width: 110px; background-image: linear-gradient(325deg, #6a00f4 0%, #a259ff 100%); color: #fff;">Select
+                    Goal</button>
+                    <span id="goal-cell-label"
+                        style="font-weight: 600; color: #a259ff; background: rgba(162,89,255,0.08); padding: 4px 16px; border-radius: 0.4em; border: 1px solid rgba(162,89,255,0.18); font-size: 1.1em;">(24,
+                        24)</span>
+                </div>
+            </div>
+        </div>
+        <div class="grid-container">
+            <div class="grid-menu">
+                <button class="btn-primary btn-safe" value="run" onclick="run()">Run</button>
+                <button class="btn-primary btn-danger" disabled value="pause" onclick="pauseAlgorithm()">Pause</button>
+                <button class="btn-primary" value="clear" onclick="clearGrid()">clear</button>
+                <button class="btn-primary btn-danger" value="reset" onclick="reset()">Reset</button>
+            </div>
+            <div class="grid" id="grid"></div>
+            <div id="status-bar"
+                style="text-align: center; padding: 10px; font-size: 1rem; font-weight: 600; color: #888;">
+                Ready
+            </div>
+        </div>
+        <div class="steplog-section" id="steplog-section" style="display: none;">
+            <div class="menu">
+                <div class="submenu" id="steplog">
+                    <p>
+                        Simulation not started.
+                        Select algorithm and
+                        click Run to begin.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
