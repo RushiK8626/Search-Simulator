@@ -52,7 +52,9 @@ export class App {
     // Initialize: setup visited history, generate obstacles, render grid
     initialize() {
         this.initializeVisitedHistory();
-        this.obstacles = this.generateObstacles(this.settings.obstacle_density);
+        do {
+            this.obstacles = this.generateObstacles(this.settings.obstacle_density);
+        } while (!this.isReachable(this.settings.start, this.settings.goal));
         this.createGrid();
     }
 
