@@ -555,3 +555,14 @@ input[type="range"].slider-control::-ms-tooltip {
         flex-direction: column;
     }
 }
+
+.footer,
+footer {
+    background-color: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
