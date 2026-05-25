@@ -82,12 +82,24 @@ function handleSelection(action, value) {
     }
 }
 
+let grid = null;
+let obstacles = null;
+
 document.getElementById("select-start-btn").addEventListener("click", () => {
+    app.saveGridCopy();
     settings.setMode(MODE.SELECTSTART);
 })
 document.getElementById("select-goal-btn").addEventListener("click", () => {
+    app.saveGridCopy();
     settings.setMode(MODE.SELECTGOAL);
 })
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    app.restoreGrid();
+    settings.setMode(MODE.IDLE);
+  }
+});
 
 
 // Start or resume algorithm execution

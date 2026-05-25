@@ -11,7 +11,7 @@ export class App {
 
     CELL_COLORS = {
         start: "green",
-        goal: "navy",   
+        goal: "navy",
         obstacle: "black",
         current: "deepskyblue",
         visited: "lightcoral",
@@ -29,6 +29,7 @@ export class App {
 
     constructor(settings) {
         this.grid = [];
+        this.gridCopy = null;
         this.obstacles = new Set();
         this.settings = settings;
         this.paused = false;
@@ -256,7 +257,7 @@ export class App {
 
         this.pathLength = path.length;
         this.updateLog();
-        
+
         for (const { r, c } of path) {
             if ((r === this.settings.start.r && c === this.settings.start.c) ||
                 (r === this.settings.goal.r && c === this.settings.goal.c)) {
@@ -285,6 +286,7 @@ export class App {
             startCellLabel.textContent = "(" + r.toString() + " ," + c.toString() + ")";
             this.settings.setMode(MODE.IDLE);
             this.initialize();
+            this.gridCopy = null;
         }
         else if (this.settings.mode === MODE.SELECTGOAL) {
             const goal = this.settings.goal;
@@ -295,6 +297,7 @@ export class App {
             goalCellLabel.textContent = "(" + r.toString() + " ," + c.toString() + ")";
             this.settings.setMode(MODE.IDLE);
             this.initialize();
+            this.gridCopy = null;
         }
 
         this.updateObstacles();
@@ -381,6 +384,33 @@ export class App {
             this.pathLength = -1;
             this.optimalPathLength = -1;
         }
+    }
+
+    saveGridCopy() {
+        this.gridCopy = {
+            obstacles: new Set(this.obstacles),
+            cells: this.grid.map(row => row.map(cell => ({
+                className: cell.className,
+                backgroundColor: cell.style.backgroundColor
+            })))
+        };
+    }
+
+    restoreGrid() {
+        if (!this.gridCopy) return;
+
+        this.obstacles = new Set(this.gridCopy.obstacles);
+
+        for (let r = 0; r < this.settings.size; r++) {
+            for (let c = 0; c < this.settings.size; c++) {
+                const snapshot = this.gridCopy.cells[r][c];
+                const cell = this.grid[r][c];
+                cell.className = snapshot.className;
+                cell.style.backgroundColor = snapshot.backgroundColor;
+            }
+        }
+
+        this.gridCopy = null;
     }
 
     startLog() {
@@ -518,7 +548,7 @@ export class App {
         this.clearGrid();
         this.initialize();
     }
-    
+
     // Dynamic mode: Agent navigates with obstacles regenerating after each step
     async runDynamicMode() {
         this.stepCount = 0;
@@ -661,7 +691,7 @@ export class App {
         this.optimalPathLength = -1;
 
         const algorithm = this.settings.algorithm;
-        
+
         try {
             if (algorithm === ALGORITHM.DFS) {
                 await this.pathFinder.DFS();
@@ -694,7 +724,7 @@ export class App {
         this.replanCount = 0;
         this.startTime = performance.now();
         this.stopped = false;
-        
+
         try {
             // Choose between static and dynamic mode based on replanning toggle
             if (this.settings.enableReplanning) {
