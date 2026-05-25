@@ -1,6 +1,7 @@
 import { Settings } from "./settings.js";
 import { App } from "./app.js";
 import { MinHeap } from "./minHeap.js";
+import { MODE } from "./constants.js";
 
 const settings = new Settings();
 const app = new App(settings);
@@ -62,9 +63,9 @@ function handleSliderChange(e) {
 
     if (action === "step-delay") {
         settings.setStepDelay(Number(value));
-    } else if (action === "grid-size") {
+    } else if (action === "grid-size" && app.stopped) {
         settings.setSize(Number(value));
-    } else if (action === "obstacle-density") {
+    } else if (action === "obstacle-density" && app.stopped) {
         settings.setObstacleDensity(parseFloat(value));
     }
 }
@@ -95,7 +96,10 @@ function run() {
     const runButton = document.querySelector('button.btn-safe[value="run"]');
     const pauseButton = document.querySelector('button.btn-danger[value="pause"]');
     const gridSizeSlider = document.querySelector('input[type="range"][data-action="grid-size"]');
+    const obstacleDensitySlider = document.querySelector('input[type="range"][data-action="obstacle-density"]');
     const replanningToggle = document.getElementById("replanning-toggle");
+
+    
     if (app.paused) {
         app.paused = false;
         runButton.textContent = "Run";
@@ -107,14 +111,16 @@ function run() {
         runButton.disabled = true;
         pauseButton.disabled = false;
         gridSizeSlider.disabled = true;
+        obstacleDensitySlider.disabled = true;
         if (replanningToggle) replanningToggle.disabled = true;
         app.startLog();
         app.run().then(() => {
             runButton.textContent = "Run";
             runButton.disabled = false;
             pauseButton.disabled = true;
-            gridSizeSlider.disabled = false;
             if (replanningToggle) replanningToggle.disabled = false;
+            gridSizeSlider.disabled = false;
+            obstacleDensitySlider.disabled = false;
         });
     }
 }
@@ -141,20 +147,28 @@ function clearGrid() {
     app.endLog();
     const runButton = document.querySelector('button.btn-safe[value="run"]');
     const pauseButton = document.querySelector('button.btn-danger[value="pause"]');
+    const gridSizeSlider = document.querySelector('input[type="range"][data-action="grid-size"]');
+    const obstacleDensitySlider = document.querySelector('input[type="range"][data-action="obstacle-density"]');
     runButton.textContent = "Run";
     runButton.disabled = false;
     pauseButton.disabled = true;
+    gridSizeSlider.disabled = false;
+    obstacleDensitySlider.disabled = false;
 }
 
 // Reset to initial state with fresh grid and obstacles
 function reset() {
     const runButton = document.querySelector('button.btn-safe[value="run"]');
     const pauseButton = document.querySelector('button.btn-danger[value="pause"]');
+    const gridSizeSlider = document.querySelector('input[type="range"][data-action="grid-size"]');
+    const obstacleDensitySlider = document.querySelector('input[type="range"][data-action="obstacle-density"]');
     app.stop();
     app.reset();
     runButton.textContent = "Run";
     runButton.disabled = false;
     pauseButton.disabled = true;
+    gridSizeSlider.disabled = false;
+    obstacleDensitySlider.disabled = false;
 }
 
 // Make functions available globally for onclick handlers

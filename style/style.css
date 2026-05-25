@@ -199,6 +199,17 @@ body {
     border: 1px solid #2a3234;
 }
 
+.slider-control:disabled {
+    accent-color: #888;   /* Modern browsers */
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.slider-control:disabled + .slider-value,
+.slider-container:has(.slider-control:disabled) label {
+    color: #aaa;
+}
+
 input[type="range"].slider-control {
     -webkit-appearance: none;
     appearance: none;
